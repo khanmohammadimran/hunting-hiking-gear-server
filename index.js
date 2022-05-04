@@ -1,11 +1,12 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
+const app = express();
 const port = process.env.PORT || 5000;
 
 
-const app = express();
+
 
 //middlewear
 app.use(cors());
