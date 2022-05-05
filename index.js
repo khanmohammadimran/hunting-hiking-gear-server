@@ -53,6 +53,14 @@ async function run() {
 
             res.send(result);
         })
+
+        // Delete a Equipment Service
+        app.delete('/equipment/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await equipmentCollection.deleteOne(query);
+            res.send(result);
+        })
     }
     finally {
 
