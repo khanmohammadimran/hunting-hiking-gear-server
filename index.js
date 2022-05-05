@@ -61,6 +61,14 @@ async function run() {
             const result = await equipmentCollection.deleteOne(query);
             res.send(result);
         })
+
+        // Add a Service
+        app.post('/equipment', async (req, res) => {
+            const newEquipment = req.body;
+            const result = await equipmentCollection.insertOne(newEquipment);
+            res.send(result);
+        })
+
     }
     finally {
 
