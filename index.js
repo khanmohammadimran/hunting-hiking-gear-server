@@ -35,10 +35,30 @@ async function run() {
             const equipment = await equipmentCollection.findOne(query);
             res.send(equipment);
         })
+
+        // Quantity update
+
+        app.patch('/equipment/:id', async (req, res) => {
+            const id = req.params.id;
+            const newQuantity = req.body;
+            console.log(newQuantity)
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    quantity: newQuantity.quantity
+                }
+            };
+            const result = await equipmentCollection.updateOne(filter, updatedDoc, options);
+
+            res.send(result);
+        })
     }
     finally {
 
     }
+
+
 }
 run().catch(console.dir);
 
