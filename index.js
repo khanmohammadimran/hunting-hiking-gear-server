@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
@@ -24,6 +25,17 @@ async function run() {
         const myitemCollection = client.db('hikingEquipment').collection('myitem');
 
 
+        //AUTH
+        app.post('/login', async (req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1d'
+            });
+            res.send({ accessToken });
+        })
+
+
+        // Equipment API 
 
         app.get('/equipment', async (req, res) => {
             const query = {};
@@ -40,7 +52,6 @@ async function run() {
         })
 
         // Quantity update
-
         app.patch('/equipment/:id', async (req, res) => {
             const id = req.params.id;
             const newQuantity = req.body;
@@ -74,8 +85,9 @@ async function run() {
         })
 
 
-        // User Selected Equipment Collection
+        // MY Item API 
 
+        // User Selected Equipment Collection
         app.get('/myitem', async (req, res) => {
             const email = req.query.email
             const query = { email: email };
