@@ -13,6 +13,22 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+function verifyUserToken(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: 'Unauthorizes Access This server could not verify that you are authorized to access the document.' })
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'Forbidden Access' });
+        }
+        console.log('decoded', decoded);
+        req.decoded = decoded;
+        next();
+    })
+}
+
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wxuhj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -88,12 +104,18 @@ async function run() {
         // MY Item API 
 
         // User Selected Equipment Collection
-        app.get('/myitem', async (req, res) => {
-            const email = req.query.email
-            const query = { email: email };
-            const cursor = myitemCollection.find(query);
-            const myitems = await cursor.toArray();
-            res.send(myitems)
+        app.get('/myitem', verifyUserToken, async (req, res) => {
+            const decodedEmail = req.decoded.email;
+            const email = req.query.email;
+            if (email === decodedEmail) {
+                const query = { email: email };
+                const cursor = myitemCollection.find(query);
+                const myitems = await cursor.toArray();
+                res.send(myitems)
+            }
+            else {
+                res.status(403).send({ message: 'Forbidden Access' })
+            }
         })
 
         app.post('/myitem', async (req, res) => {
