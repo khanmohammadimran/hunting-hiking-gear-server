@@ -21,6 +21,9 @@ async function run() {
     try {
         await client.connect();
         const equipmentCollection = client.db('hikingEquipment').collection('equipment');
+        const myitemCollection = client.db('hikingEquipment').collection('myitem');
+
+
 
         app.get('/equipment', async (req, res) => {
             const query = {};
@@ -52,6 +55,7 @@ async function run() {
             const result = await equipmentCollection.updateOne(filter, updatedDoc, options);
 
             res.send(result);
+
         })
 
         // Delete a Equipment Service
@@ -62,10 +66,27 @@ async function run() {
             res.send(result);
         })
 
-        // Add a Service
+        // Add a Equipment Service
         app.post('/equipment', async (req, res) => {
             const newEquipment = req.body;
             const result = await equipmentCollection.insertOne(newEquipment);
+            res.send(result);
+        })
+
+
+        // User Selected Equipment Collection
+
+        app.get('/myitem', async (req, res) => {
+            const email = req.query.email
+            const query = { email: email };
+            const cursor = myitemCollection.find(query);
+            const myitems = await cursor.toArray();
+            res.send(myitems)
+        })
+
+        app.post('/myitem', async (req, res) => {
+            const myitem = req.body;
+            const result = await myitemCollection.insertOne(myitem);
             res.send(result);
         })
 
