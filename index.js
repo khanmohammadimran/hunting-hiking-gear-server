@@ -16,7 +16,7 @@ app.use(express.json());
 function verifyUserToken(req, res, next) {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return res.status(401).send({ message: 'Unauthorizes Access This server could not verify that you are authorized to access the document.' })
+        return res.status(401).send({ message: 'Unauthorized Access' })
     }
     const token = authHeader.split(' ')[1];
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
@@ -27,6 +27,7 @@ function verifyUserToken(req, res, next) {
         req.decoded = decoded;
         next();
     })
+
 }
 
 
@@ -111,7 +112,7 @@ async function run() {
                 const query = { email: email };
                 const cursor = myitemCollection.find(query);
                 const myitems = await cursor.toArray();
-                res.send(myitems)
+                res.send({ myitems })
             }
             else {
                 res.status(403).send({ message: 'Forbidden Access' })
