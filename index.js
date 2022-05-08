@@ -147,6 +147,10 @@ app.get('/', (req, res) => {
     res.send('Running Hiking Equipment')
 });
 
+app.get('/rifat', (req, res) => {
+    res.send('Doing code about 13 hours continously')
+})
+
 app.listen(port, () => {
     console.log('Listening to port', port)
 })
